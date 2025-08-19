@@ -1,0 +1,49 @@
+{
+  "name": "mgrant-playwright-automation",
+  "version": "1.0.0",
+  "description": "Playwright test automation framework for MGrant application with automatic test generation",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed --workers=1",
+    "test:debug": "npx playwright test --debug",
+    "test:mgrant": "npx playwright test mgrant-production.test.js",
+    "test:mgrant:smoke": "npx playwright test mgrant-production.test.js --grep @smoke",
+    "test:mgrant:workflow": "npx playwright test mgrant-production.test.js --grep @workflow",
+    "test:mgrant:security": "npx playwright test mgrant-production.test.js --grep @security",
+    "test:generated": "npx playwright test tests/generated/",
+    "test:generated:single": "npx playwright test tests/generated/ --headed --workers=1",
+    "codegen": "npx playwright codegen https://qa.mgrant.in",
+    "codegen:login": "npx playwright codegen https://qa.mgrant.in/#/login",
+    "generate:tests": "node scripts/test-generator.js",
+    "record:session": "npx playwright codegen --save-storage=auth/mgrant-session.json https://qa.mgrant.in/#/login",
+    "report": "npx playwright show-report",
+    "install:browsers": "npx playwright install",
+    "trace": "npx playwright show-trace",
+    "clean": "rm -rf test-results/ playwright-report/",
+    "clean:generated": "rm -rf tests/generated/*.test.js"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "testing",
+    "mgrant",
+    "test-generation",
+    "codegen"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "eslint": "^8.55.0",
+    "eslint-plugin-playwright": "^0.18.0",
+    "prettier": "^3.1.0",
+    "dotenv": "^16.3.1"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 
