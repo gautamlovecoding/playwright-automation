@@ -34,11 +34,12 @@
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
-    "@playwright/test": "^1.40.0",
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.3.0",
+    "dotenv": "^16.3.1",
     "eslint": "^8.55.0",
     "eslint-plugin-playwright": "^0.18.0",
-    "prettier": "^3.1.0",
-    "dotenv": "^16.3.1"
+    "prettier": "^3.1.0"
   },
   "dependencies": {
     "@faker-js/faker": "^8.3.1"
@@ -46,4 +47,4 @@
   "engines": {
     "node": ">=18.0.0"
   }
-} 
+}

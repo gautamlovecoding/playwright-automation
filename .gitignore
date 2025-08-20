@@ -152,4 +152,9 @@ docker-compose*
 .eslintcache
 
 # Prettier
-.prettierignore 
+.prettierignore
+
+# Playwright
+/playwright-report/
+/blob-report/
+/playwright/.cache/
