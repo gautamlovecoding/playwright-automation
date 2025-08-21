@@ -1,208 +1,296 @@
-# 🎭 MGrant Playwright Automation Framework
+# 🎭 MGrant Dynamic Test Orchestrator
 
-**Automatic test generation framework** for MGrant application at https://qa.mgrant.in with **working login credentials** and **single window testing**.
+**Intelligent, flow-based test automation** for MGrant application at https://qa.mgrant.in with **shared authentication**, **dynamic execution ordering**, and **zero repeated logins**.
 
-## 🚀 **Quick Start - Generate Tests in 30 Seconds**
+## ✨ **Key Features**
+
+- 🔍 **Auto-Discovery**: Automatically finds and analyzes all test files
+- 📋 **Dynamic Ordering**: Intelligent execution order based on priorities and dependencies
+- 🔐 **Shared Authentication**: Login once, use everywhere - no more repeated logins
+- ⚡ **Flow-Based Execution**: Tests run in logical workflows, not random order
+- 📊 **Smart Analytics**: Duration estimation, dependency resolution, and detailed reporting
+- 🎯 **Zero Configuration**: Just add tests and run - the orchestrator handles the rest
+
+## 🚀 **Quick Start - Dynamic Testing in 30 Seconds**
 
 ```bash
 # 1. Install dependencies
 npm install && npm run install:browsers
 
-# 2. Generate tests by using your app
-npm run codegen
+# 2. Record authentication session (one-time setup)
+npm run record:session
 
-# 3. Run your working tests in single window
-npm run test:generated:single
+# 3. Run all tests in intelligent order
+npm run test:flow
 ```
 
-## 🤖 **Automatic Test Generation**
+## 🎯 **Dynamic Test Execution**
 
-### **🎭 Generate Tests by Simply Using MGrant**
+### **🤖 Automatic Test Discovery & Ordering**
+
+The orchestrator automatically:
+- Discovers all `.test.js` files in your project
+- Analyzes dependencies and priorities from file content
+- Creates an intelligent execution plan
+- Runs tests in logical flow order
+
 ```bash
-npm run codegen
+# Run dynamic test flow
+npm run test:flow
+
+# Preview execution plan without running
+npm run test:flow:preview
+
+# Run with headed browser for debugging
+npm run test:dynamic:headed
 ```
-1. Browser opens with MGrant application
-2. **Login, navigate, interact normally**
-3. **Playwright generates test code automatically**
-4. **Copy and paste** into your test files
 
-### **🔐 Save Authentication Session**
+### **🔐 Shared Authentication - No More Repeated Logins**
+
 ```bash
+# Record your login session once
 npm run record:session
 ```
-1. Login once with your credentials
-2. Session saved to `auth/mgrant-session.json`
-3. **Skip login in all future tests**
 
-## ✅ **Working Configuration**
+After recording, all tests automatically use the shared session:
+- ✅ **No repeated logins** across test execution
+- ✅ **Faster test runs** - skip authentication steps
+- ✅ **More reliable** - consistent authentication state
+- ✅ **Flow continuity** - maintain user context between tests
 
-- **Application**: https://qa.mgrant.in
-- **Login Page**: `/#/login`
-- **Credentials**: `gautam.kumar@dhwaniris.com` / `Dhwani2024@csr`
-- **Selectors**: 
-  - Email: `#login`
-  - Password: `#password`
-  - Submit: `button[type="submit"]`
-- **Success Redirect**: `/#/organisations`
+## 📋 **Test Priority System**
 
-## 📁 **Clean Project Structure**
+Tests are automatically ordered by intelligent priority detection:
 
-```
-mgrant-playwright-automation/
-├── 📁 tests/
-│   ├── ✅ mgrant-production.test.js      # Production MGrant tests
-│   └── 📁 generated/                     # 🤖 Auto-generated tests
-│       ├── ✅ mgrant-generated-workflow.test.js  # Your working generated test
-│       └── README.md                     # Generation instructions
-├── 📁 pages/
-│   ├── ✅ BasePage.js                    # Base page with common methods
-│   └── ✅ AppLoginPage.js                # MGrant login page object
-├── 📁 scripts/
-│   ├── ✅ test-generator.js              # Advanced test generator
-│   └── ✅ codegen-helper.js              # Codegen utilities
-├── 📁 config/
-│   └── ✅ app-config.js                  # MGrant application config
-├── 📁 fixtures/
-│   ├── ✅ test-data.js                   # Test data generation
-│   └── ✅ test-hooks.js                  # Test fixtures
-├── 📁 auth/                              # Authentication sessions
-└── ✅ playwright.config.js               # Single window config
-```
+| Priority | Type | Examples | Auto-Detected From |
+|----------|------|----------|-------------------|
+| **1** | Authentication & Setup | `LoginPageFlow.test.js` | filename contains: `login`, `auth` |
+| **2** | Configuration | `setup.test.js` | filename contains: `setup`, `config` |
+| **3** | Core Functionality | `organisation.test.js` | filename contains: `organisation`, `user`, `dashboard` |
+| **4** | Feature Testing | `project.test.js` | filename contains: `project`, `report`, `admin` |
+| **5** | Integration & Workflows | `workflow.test.js` | filename contains: `integration`, `e2e`, `workflow` |
+| **6** | Additional Tests | `other.test.js` | all other test files |
 
-## 🚀 **Essential Commands**
+## 🏗️ **Writing Dynamic Tests**
 
-### **🎭 Test Generation**
-```bash
-npm run codegen                 # Generate tests by interacting
-npm run codegen:login          # Focus on login page
-npm run record:session         # Save authentication session
-```
-
-### **🧪 Single Window Test Execution**
-```bash
-npm run test:headed            # Run tests in single browser window
-npm run test:single            # Run tests in single window (stop on first failure)
-npm run test:generated:single  # Run generated tests in single window
-npm run test:debug             # Debug mode (single window)
-```
-
-### **🧪 Background Test Execution**
-```bash
-npm run test:mgrant:smoke      # Quick smoke tests (headless)
-npm run test:mgrant           # All MGrant tests (headless)
-npm run test:generated        # Run auto-generated tests (headless)
-```
-
-### **📊 Reporting**
-```bash
-npm run report                # View HTML test results
-npm run trace                 # Debug with trace viewer
-```
-
-## 🎯 **Your Working Generated Test**
-
-Located in `tests/generated/mgrant-generated-workflow.test.js`:
+### **Add Metadata to Your Tests**
 
 ```javascript
-test('should complete MGrant login and organisation workflow', async ({ page }) => {
-  // Navigate to login
-  await page.goto('/#/login');
-  await page.waitForTimeout(5000);
+/**
+ * @tag authentication, login, core
+ * @priority 1
+ * @depends LoginPageFlow
+ * @description MGrant Login Page Flow Test - Authentication and initial setup
+ */
 
-  // Login (generated from your interactions)
-  await page.getByRole('textbox', { name: 'example@email.com' }).fill('gautam.kumar@dhwaniris.com');
-  await page.getByRole('textbox', { name: 'Password' }).fill('Dhwani2024@csr');
-  await page.getByRole('button', { name: 'Log In' }).click();
+const { test, expect } = require('../../fixtures/shared-auth-hooks');
 
-  // Organisation workflow (generated from your interactions)
-  await page.getByRole('button', { name: 'add' }).click();
-  await page.locator('.cdk-overlay-backdrop').click();
-  await page.getByRole('textbox', { name: 'Search by organisation name' }).fill('satyam99.');
-  await page.locator('div').filter({ hasText: /^Satyam99\.$/ }).first().click();
-  await page.getByText('Proposal Project Proposal').click();
-
-  // Verify success
-  expect(page.url()).toContain('mgrant.in');
-});
-```
-
-**✅ This test is working and passes all scenarios!**
-
-## 🎭 **Single Window Testing Commands**
-
-### **🖥️ Watch Your Tests Run (Single Window):**
-```bash
-# Run all tests in single browser window
-npm run test:headed
-
-# Run generated tests in single window
-npm run test:generated:single
-
-# Run specific test in single window
-npx playwright test mgrant-production.test.js --headed --workers=1
-
-# Debug mode (always single window)
-npm run test:debug
-```
-
-### **⚡ Fast Background Testing:**
-```bash
-# Run tests without browser window (faster)
-npm run test:mgrant:smoke
-npm run test:generated
-```
-
-## 🎭 **Generate More Tests**
-
-### **For Different MGrant Features:**
-```bash
-npm run codegen
-# Then test:
-# - User management
-# - Report generation  
-# - Settings configuration
-# - Data export/import
-# - Admin functions
-```
-
-### **Template for New Tests:**
-```javascript
-const { test, expect } = require('../../fixtures/test-hooks');
-
-test.describe('MGrant [Feature] Tests', () => {
-  test('should test [feature name]', async ({ page }) => {
-    await page.goto('/#/login');
-    await page.waitForTimeout(5000);
+test.describe('My Test Suite', () => {
+  test('should test something', async ({ authenticatedPage: page, flowContext }) => {
+    // Use authenticatedPage instead of page - authentication handled automatically
+    flowContext.logStep('Navigate to target page');
+    await page.goto('/dashboard');
     
-    // === PASTE YOUR GENERATED CODE HERE ===
-    
-    // Add assertions
-    expect(page.url()).toBeDefined();
+    // Your test logic here - no login required!
   });
 });
 ```
 
-## 📊 **Current Test Status**
+### **Available Fixtures**
 
-- ✅ **MGrant Production Tests**: 3/3 passing
-- ✅ **Generated Workflow Test**: 3/3 passing  
-- ✅ **Login Functionality**: 100% working
-- ✅ **Organisation Search**: 100% working
-- ✅ **Mobile Compatibility**: 100% working
-- ✅ **Error Handling**: 100% working
-- ✅ **Single Window Mode**: Configured and working
+- **`authenticatedPage`**: Pre-authenticated page with session loaded
+- **`quickLogin`**: Helper for manual login when needed
+- **`flowContext`**: Context for tracking test flow and data
 
-## 🎉 **Ready to Use!**
+## 📊 **Execution Flow Example**
 
-Your MGrant testing framework is **clean, focused, and fully functional** with:
+```
+🚀 Starting Dynamic Test Execution...
+=====================================
 
-- 🤖 **Automatic test generation**
-- ✅ **Working login credentials**
-- 🎯 **MGrant-specific optimization**
-- 📱 **Mobile testing support**
-- 🔐 **Authentication session management**
-- 🖥️ **Single window testing** (no more multiple windows!)
+🔍 Discovering test files...
+✅ Found 3 test files
 
-**Start generating tests now: `npm run codegen` 🚀**
+📋 Creating dynamic execution plan...
+✅ Execution plan created:
+   1. Authentication & Setup (1 tests, ~2min)
+   2. Core Functionality (2 tests, ~4min)
 
-**Watch tests run in single window: `npm run test:headed` 🖥️** 
+🔐 Setting up shared authentication...
+✅ Valid authentication session found
+📊 Session contains 15 cookies
+
+📋 Authentication & Setup
+🎯 Tests: 1 | Duration: ~2min
+-----------------------------------
+⚡ Executing: LoginPageFlow
+✅ LoginPageFlow completed successfully
+
+📋 Core Functionality  
+🎯 Tests: 2 | Duration: ~4min
+-----------------------------------
+⚡ Executing: organisation
+✅ organisation completed successfully
+
+🏁 Dynamic Test Execution Summary
+=================================
+✅ Passed Tests: 3
+❌ Failed Tests: 0
+📊 Success Rate: 100%
+```
+
+## 🛠️ **Advanced Configuration**
+
+### **Custom Test Metadata**
+
+Add metadata to your test files for better orchestration:
+
+```javascript
+/**
+ * @tag smoke, critical, user-management
+ * @priority 3
+ * @depends LoginPageFlow, UserSetup
+ * @description User management functionality tests
+ */
+```
+
+### **Flow Context Usage**
+
+```javascript
+test('should maintain context across steps', async ({ authenticatedPage: page, flowContext }) => {
+  // Log test steps for better visibility
+  flowContext.logStep('Navigate to user page');
+  
+  // Track current page
+  flowContext.setCurrentPage('users');
+  
+  // Store test data for other tests
+  flowContext.setTestData('selectedUser', 'john.doe@example.com');
+  
+  // Retrieve test data
+  const userData = flowContext.getTestData('selectedUser');
+});
+```
+
+## 📁 **Project Structure**
+
+```
+mgrant-playwright-automation/
+├── 📁 tests/
+│   └── 📁 generated/                     # 🤖 Your test files
+│       ├── ✅ LoginPageFlow.test.js      # Priority 1: Authentication
+│       ├── ✅ organisation.test.js       # Priority 3: Core functionality
+│       └── ✅ [your-tests].test.js       # Auto-discovered and ordered
+├── 📁 fixtures/
+│   ├── ✅ shared-auth-hooks.js           # Enhanced test fixtures
+│   └── ✅ test-hooks.js                  # Original fixtures
+├── 📁 scripts/
+│   ├── ✅ dynamic-test-orchestrator.js   # 🧠 Intelligent orchestrator
+│   ├── ✅ test-generator.js              # Test generation tools
+│   └── ✅ codegen-helper.js              # Codegen utilities
+├── 📁 config/
+│   ├── ✅ shared-auth-setup.js           # 🔐 Shared authentication
+│   ├── ✅ global-setup.js                # Global configuration
+│   └── ✅ app-config.js                  # Application settings
+├── 📁 auth/
+│   └── ✅ mgrant-session.json            # 🔐 Saved authentication session
+└── ✅ playwright.config.js               # Optimized for dynamic execution
+```
+
+## 🎯 **Available Commands**
+
+### **Dynamic Test Execution**
+```bash
+npm run test:flow              # Run all tests in intelligent order
+npm run test:flow:preview      # Preview execution plan
+npm run test:dynamic           # Same as test:flow
+npm run test:dynamic:dry       # Dry run with detailed plan
+npm run test:dynamic:headed    # Run with headed browser
+```
+
+### **Traditional Test Execution**
+```bash
+npm run test                   # Standard Playwright execution
+npm run test:headed            # With headed browser
+npm run test:generated         # Run only generated tests
+```
+
+### **Development & Debugging**
+```bash
+npm run codegen               # Generate tests interactively
+npm run record:session        # Record authentication session
+npm run test:debug            # Debug mode
+npm run report                # View test report
+```
+
+## 🔧 **Migration from Static Hierarchy**
+
+If you're migrating from the old static system:
+
+1. **Remove old imports**:
+   ```javascript
+   // OLD
+   const { test, expect } = require('../../fixtures/test-hooks');
+   
+   // NEW
+   const { test, expect } = require('../../fixtures/shared-auth-hooks');
+   ```
+
+2. **Update test signatures**:
+   ```javascript
+   // OLD
+   test('my test', async ({ page }) => {
+   
+   // NEW
+   test('my test', async ({ authenticatedPage: page, flowContext }) => {
+   ```
+
+3. **Remove manual login code**:
+   ```javascript
+   // OLD - Remove this repetitive code
+   await page.goto('/login');
+   await page.fill('[name="email"]', 'user@example.com');
+   await page.fill('[name="password"]', 'password');
+   await page.click('[type="submit"]');
+   
+   // NEW - Authentication handled automatically
+   await page.goto('/dashboard'); // Already authenticated!
+   ```
+
+4. **Add test metadata** (optional but recommended):
+   ```javascript
+   /**
+    * @tag feature-name, priority-level
+    * @priority 3
+    * @depends OtherTest
+    */
+   ```
+
+## 🎉 **Benefits of Dynamic System**
+
+| Feature | Old Static System | New Dynamic System |
+|---------|------------------|-------------------|
+| **Login Handling** | Manual login in every test | ✅ Shared authentication |
+| **Test Ordering** | Fixed, manual configuration | ✅ Intelligent auto-ordering |
+| **Dependency Management** | Manual project dependencies | ✅ Automatic dependency resolution |
+| **Test Discovery** | Manual test file listing | ✅ Automatic discovery |
+| **Flow Context** | No shared context | ✅ Flow-aware execution |
+| **Execution Speed** | Slow (repeated logins) | ✅ Fast (shared session) |
+| **Maintenance** | High (manual config) | ✅ Low (auto-configuration) |
+
+## 🚀 **Getting Started**
+
+1. **Record authentication session**:
+   ```bash
+   npm run record:session
+   ```
+
+2. **Run your first dynamic test flow**:
+   ```bash
+   npm run test:flow:preview  # See what will run
+   npm run test:flow          # Execute the flow
+   ```
+
+3. **Add your own tests** - just drop them in `tests/generated/` and they'll be automatically discovered and ordered!
+
+The dynamic orchestrator handles everything else automatically! 🎯 

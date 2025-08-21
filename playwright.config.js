@@ -17,7 +17,7 @@ module.exports = defineConfig({
   // Directory for test artifacts
   outputDir: './test-results',
   
-  // Run tests in files in parallel (disabled for headed mode)
+  // Run tests in files in parallel (disabled for flow-based execution)
   fullyParallel: false,
   
   // Fail the build on CI if you accidentally left test.only in the source code
@@ -26,7 +26,7 @@ module.exports = defineConfig({
   // Retry on CI only
   retries: process.env.CI ? 2 : 0,
   
-  // Workers for parallel execution - Use 1 worker for single window experience
+  // Workers for parallel execution - Use 1 worker for flow-based testing
   workers: 1,
   
   // Global timeout for each test
@@ -79,10 +79,10 @@ module.exports = defineConfig({
     },
   },
 
-  // Configure only Chrome browser for MGrant application testing
+  // Single project configuration for dynamic orchestrator
   projects: [
     {
-      name: 'chromium',
+      name: 'mgrant-dynamic-flow',
       use: { 
         ...devices['Desktop Chrome'],
         // Custom Chrome args for better performance
@@ -99,7 +99,7 @@ module.exports = defineConfig({
   ],
 
   // Global setup and teardown
-  globalSetup: require.resolve('./config/global-setup.js'),
+  globalSetup: require.resolve('./config/shared-auth-setup.js'),
   globalTeardown: require.resolve('./config/global-teardown.js'),
 
   // Folder for test artifacts such as screenshots, videos, traces, etc.
@@ -120,6 +120,7 @@ module.exports = defineConfig({
     'base-url': appConfig.app.baseURL,
     'api-url': appConfig.app.apiURL,
     'browser-version': 'latest',
-    'application': 'MGrant QA Environment',
+    'application': 'MGrant QA Environment - Dynamic Flow Testing',
+    'execution-mode': 'dynamic-orchestrated'
   },
 }); 
