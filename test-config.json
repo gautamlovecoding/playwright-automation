@@ -1,0 +1,92 @@
+{
+  "testPrecedence": [
+    "tests/Authentication/Login.test.js",
+    "tests/Organisation/Organisation.test.js",
+    "tests/Masters/Beneficiary.test.js",
+    "tests/Masters/FocusArea.test.js"
+  ],
+  "continuousFlowRunner": "tests/continuous-flow.test.js",
+  "executionSettings": {
+    "mode": "continuous",
+    "singleBrowserSession": true,
+    "preserveAuthenticationState": true,
+    "stopOnFailure": false,
+    "globalTimeout": 300000,
+    "moduleTimeout": 180000
+  },
+  "moduleSettings": {
+    "Authentication": {
+      "priority": "critical",
+      "required": true,
+      "timeout": 120000,
+      "description": "Authentication and login functionality tests"
+    },
+    "Organisation": {
+      "priority": "high", 
+      "required": true,
+      "timeout": 180000,
+      "description": "Organisation management and search functionality tests",
+      "dependencies": ["Authentication"]
+    },
+    "Masters": {
+      "priority": "medium",
+      "required": true,
+      "timeout": 240000,
+      "description": "Masters module - Beneficiary management functionality tests",
+      "dependencies": ["Authentication"]
+    },
+    "FocusArea": {
+      "priority": "medium",
+      "required": true,
+      "timeout": 300000,
+      "description": "Masters module - CSR Focus Area management functionality tests",
+      "dependencies": ["Authentication"]
+    }
+  },
+  "executionProfiles": {
+    "full": {
+      "description": "Run all configured test files in sequence",
+      "includeAll": true
+    },
+    "smoke": {
+      "description": "Run critical tests only",
+      "testPrecedence": [
+        "tests/Authentication/Login.test.js"
+      ]
+    },
+    "business-logic": {
+      "description": "Run business logic tests",
+      "testPrecedence": [
+        "tests/Authentication/Login.test.js",
+        "tests/Organisation/Organisation.test.js"
+      ]
+    }
+  },
+  "futureModules": {
+    "Projects": {
+      "path": "tests/Projects/Projects.test.js",
+      "priority": "medium",
+      "dependencies": ["Authentication"],
+      "description": "Project management functionality tests"
+    },
+    "UserManagement": {
+      "path": "tests/UserManagement/Users.test.js", 
+      "priority": "medium",
+      "dependencies": ["Authentication"],
+      "description": "User management and profile tests"
+    },
+    "Reports": {
+      "path": "tests/Reports/Reports.test.js",
+      "priority": "low",
+      "dependencies": ["Authentication", "Organisation"],
+      "description": "Reporting and analytics tests"
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Config-driven test execution for MGrant application",
+    "lastUpdated": "2024-01-01",
+    "totalConfiguredTests": 2,
+    "estimatedExecutionTime": "4-6 minutes"
+  }
+}

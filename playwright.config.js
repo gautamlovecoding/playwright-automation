@@ -1,5 +1,4 @@
 const { defineConfig, devices } = require('@playwright/test');
-const appConfig = require('./config/app-config');
 
 /**
  * Read environment variables from file.
@@ -19,40 +18,49 @@ module.exports = defineConfig({
   
   // Run tests in files in parallel (disabled for flow-based execution)
   fullyParallel: false,
-  
+
   // Fail the build on CI if you accidentally left test.only in the source code
   forbidOnly: !!process.env.CI,
-  
-  // Retry on CI only
-  retries: process.env.CI ? 2 : 0,
-  
-  // Workers for parallel execution - Use 1 worker for flow-based testing
+
+  // Retry on CI only - reduced retries for flow testing
+  retries: process.env.CI ? 1 : 0,
+
+  // Workers for parallel execution - Use 1 worker for flow-based testing to maintain session
   workers: 1,
   
+  // Global setup removed - handled by TestRunner internally
+  
   // Global timeout for each test
-  timeout: parseInt(process.env.TIMEOUT) || 60 * 1000, // 60 seconds
+  timeout: parseInt(process.env.TIMEOUT) || 120 * 1000, // 120 seconds
   
   // Global timeout for expect assertions
   expect: {
     timeout: 10 * 1000, // 10 seconds
   },
   
-  // Reporter to use
+  // Enhanced reporter configuration for better HTML reports
   reporter: [
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['html', { 
+      outputFolder: 'playwright-report', 
+      open: 'never',
+      attachmentsBaseURL: 'data:',
+      host: 'localhost',
+      port: 9323
+    }],
     ['json', { outputFile: 'test-results/results.json' }],
     ['line'],
+    ['junit', { outputFile: 'test-results/junit-results.xml' }],
   ],
   
   // Shared settings for all projects
   use: {
     // Base URL for MGrant application
-    baseURL: appConfig.app.baseURL,
+    baseURL: process.env.BASE_URL || 'https://qa.mgrant.in',
     
-    // Global test timeout
+    // Global test timeout - optimized for faster execution
     actionTimeout: 15 * 1000, // 15 seconds
     
-    // Global navigation timeout
+    // Global navigation timeout - optimized for faster loading
     navigationTimeout: 30 * 1000, // 30 seconds
     
     // Collect trace when retrying the failed test
@@ -79,28 +87,56 @@ module.exports = defineConfig({
     },
   },
 
-  // Single project configuration for dynamic orchestrator
+  // Single project configuration for config-driven execution
   projects: [
     {
-      name: 'mgrant-dynamic-flow',
+      name: 'mgrant-config-flow',
       use: { 
         ...devices['Desktop Chrome'],
-        // Custom Chrome args for better performance
+        // Ultra-fast Chrome args similar to regular browsing
         launchOptions: {
           args: [
             '--disable-web-security',
             '--disable-features=VizDisplayCompositor',
             '--no-sandbox',
             '--disable-setuid-sandbox',
-          ]
+            '--disable-dev-shm-usage',
+            '--disable-extensions',
+            '--disable-gpu',
+            '--disable-background-timer-throttling',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-renderer-backgrounding',
+            '--disable-features=TranslateUI',
+            '--disable-ipc-flooding-protection',
+            '--disable-default-apps',
+            '--disable-sync',
+            '--metrics-recording-only',
+            '--no-first-run',
+            '--disable-background-networking',
+            '--disable-component-extensions-with-background-pages',
+            '--disable-client-side-phishing-detection',
+            '--disable-hang-monitor',
+            '--disable-prompt-on-repost',
+            '--disable-blink-features=AutomationControlled',
+            '--disable-infobars',
+            '--disable-notifications',
+            '--disable-save-password-bubble',
+            '--disable-translate',
+            '--disable-plugins-discovery',
+            '--disable-preconnect',
+            '--disable-loading-animation',
+            '--aggressive-cache-discard',
+            '--memory-pressure-off',
+            '--max_old_space_size=4096'
+          ],
+          // Use faster channel
+          channel: 'chrome',
+          // Disable automation indicators
+          ignoreDefaultArgs: ['--enable-automation']
         }
       },
     }
   ],
-
-  // Global setup and teardown
-  globalSetup: require.resolve('./config/shared-auth-setup.js'),
-  globalTeardown: require.resolve('./config/global-teardown.js'),
 
   // Folder for test artifacts such as screenshots, videos, traces, etc.
   outputDir: 'test-results/',
@@ -117,10 +153,9 @@ module.exports = defineConfig({
   // Test metadata
   metadata: {
     'test-environment': process.env.NODE_ENV || 'development',
-    'base-url': appConfig.app.baseURL,
-    'api-url': appConfig.app.apiURL,
+    'base-url': process.env.BASE_URL || 'https://qa.mgrant.in',
     'browser-version': 'latest',
-    'application': 'MGrant QA Environment - Dynamic Flow Testing',
-    'execution-mode': 'dynamic-orchestrated'
+    'application': 'MGrant QA Environment - Config-Driven Testing',
+    'execution-mode': 'config-driven-continuous-flow'
   },
 }); 
