@@ -42,18 +42,10 @@ jobs:
         run: npx playwright install-deps chromium
 
       - name: 🧪 Run all tests
-<<<<<<< Updated upstream
         run: npm run test
         env:
           BASE_URL: 'https://qa.mgrant.in'
           CI: true
-=======
-        run: npm run test -- --max-failures=1
-        env:
-          BASE_URL: 'https://qa.mgrant.in'
-          CI: true
-          PLAYWRIGHT_NO_RETRY: true
->>>>>>> Stashed changes
 
       - name: 📊 Upload test results
         uses: actions/upload-artifact@v4
