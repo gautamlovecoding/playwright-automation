@@ -1,0 +1,68 @@
+name: 🎭 Playwright Tests
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18'
+  CI: true
+
+jobs:
+  playwright-tests:
+    name: 🎯 Run Playwright Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📥 Install dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: 🧪 Run all tests
+        run: npm run test
+        env:
+          BASE_URL: 'https://qa.mgrant.in'
+          CI: true
+
+      - name: 📊 Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-test-results-${{ github.run_number }}
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 30
+
+      - name: 📋 Generate test summary
+        if: always()
+        run: |
+          echo "## 🎭 Playwright Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Test Execution Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run Number**: ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: QA" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📁 **Test artifacts**: playwright-test-results-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: ✅ Test completion status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ All tests completed successfully!"
+          else
+            echo "❌ Some tests failed or encountered issues"
+            exit 1
+          fi
