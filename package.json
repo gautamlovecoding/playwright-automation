@@ -1,18 +1,16 @@
 {
   "name": "mgrant-playwright-automation",
   "version": "1.0.0",
-  "description": "Playwright test automation framework for MGrant application with automatic test generation",
+  "description": "Config-driven Playwright test automation framework for MGrant application with continuous flow execution",
   "main": "index.js",
   "scripts": {
-    "test": "npx playwright test",
-    "test:dynamic": "node scripts/dynamic-test-orchestrator.js",
-    "test:dynamic:dry": "node scripts/dynamic-test-orchestrator.js --dry-run",
-    "test:dynamic:headed": "node scripts/dynamic-test-orchestrator.js --headed",
-    "test:flow": "node scripts/dynamic-test-orchestrator.js",
-    "test:flow:preview": "node scripts/dynamic-test-orchestrator.js --dry-run",
+    "test": "node scripts/test-orchestrator.js --continuous",
+    "test:preview": "node scripts/test-orchestrator.js --preview",
+    "test:headed": "node scripts/test-orchestrator.js --continuous --headed",
     "codegen": "npx playwright codegen https://qa.mgrant.in/#/login",
     "record:session": "npx playwright codegen --save-storage=auth/mgrant-session.json https://qa.mgrant.in/#/login",
     "report": "npx playwright show-report",
+    "report:custom": "node scripts/generate-custom-report.js && echo 'Custom report generated at test-results/custom-report.html'",
     "install:browsers": "npx playwright install"
   },
   "keywords": [
@@ -20,21 +18,14 @@
     "automation",
     "testing",
     "mgrant",
-    "test-generation",
-    "codegen"
+    "config-driven",
+    "continuous-flow"
   ],
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.54.2",
-    "@types/node": "^24.3.0",
-    "dotenv": "^16.3.1",
-    "eslint": "^8.55.0",
-    "eslint-plugin-playwright": "^0.18.0",
-    "prettier": "^3.1.0"
-  },
-  "dependencies": {
-    "@faker-js/faker": "^8.3.1"
+    "dotenv": "^16.3.1"
   },
   "engines": {
     "node": ">=18.0.0"
