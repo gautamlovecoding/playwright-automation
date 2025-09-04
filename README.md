@@ -433,7 +433,7 @@ A: The framework includes automatic retry logic and increased timeouts. If issue
 A: Verify credentials in `AuthManager.js` and ensure the login page structure hasn't changed
 
 **Q: New test module not executing**  
-A: Ensure the module is added to `testPrecedence` array in `test-config.json` and exports `executeTests` function
+A: Ensure the module is added to `testPrecedence` array in `test-config.json` and exports `executeTests` function.
 
 ### **Getting Help**
 
